@@ -7,20 +7,18 @@
 
 namespace Spryker\Zed\CmsBlockCategoryStorage\Communication\Plugin\Event\Listener;
 
-use Spryker\Zed\CmsBlockCategoryConnector\Dependency\CmsBlockCategoryConnectorEvents;
+use Orm\Zed\CmsBlockCategoryConnector\Persistence\Map\SpyCmsBlockCategoryConnectorTableMap;
 use Spryker\Zed\Event\Dependency\Plugin\EventBulkHandlerInterface;
 use Spryker\Zed\Kernel\Communication\AbstractPlugin;
 use Spryker\Zed\PropelOrm\Business\Transaction\DatabaseTransactionHandlerTrait;
 
 /**
- * @deprecated Use `\Spryker\Zed\CmsBlockCategoryStorage\Communication\Plugin\Event\Listener\CmsBlockCategoryConnectorStoragePublishListener` and `\Spryker\Zed\CmsBlockCategoryStorage\Communication\Plugin\Event\Listener\CmsBlockCategoryConnectorStoragePublishListener` instead.
- *
  * @method \Spryker\Zed\CmsBlockCategoryStorage\Communication\CmsBlockCategoryStorageCommunicationFactory getFactory()
  * @method \Spryker\Zed\CmsBlockCategoryStorage\Persistence\CmsBlockCategoryStorageQueryContainerInterface getQueryContainer()
  * @method \Spryker\Zed\CmsBlockCategoryStorage\Business\CmsBlockCategoryStorageFacadeInterface getFacade()
  * @method \Spryker\Zed\CmsBlockCategoryStorage\CmsBlockCategoryStorageConfig getConfig()
  */
-class CmsBlockCategoryConnectorPublishStorageListener extends AbstractPlugin implements EventBulkHandlerInterface
+class CmsBlockCategoryConnectorEntityStorageUnpublishListener extends AbstractPlugin implements EventBulkHandlerInterface
 {
     use DatabaseTransactionHandlerTrait;
 
@@ -37,14 +35,8 @@ class CmsBlockCategoryConnectorPublishStorageListener extends AbstractPlugin imp
     public function handleBulk(array $eventTransfers, $eventName)
     {
         $this->preventTransaction();
-        $idCategories = $this->getFactory()->getEventBehaviorFacade()->getEventTransferIds($eventTransfers);
+        $categoryIds = $this->getFactory()->getEventBehaviorFacade()->getEventTransferForeignKeys($eventTransfers, SpyCmsBlockCategoryConnectorTableMap::COL_FK_CATEGORY);
 
-        if ($eventName === CmsBlockCategoryConnectorEvents::CMS_BLOCK_CATEGORY_CONNECTOR_UNPUBLISH) {
-            $this->getFacade()->refreshOrUnpublish($idCategories);
-
-            return;
-        }
-
-        $this->getFacade()->publish($idCategories);
+        $this->getFacade()->refreshOrUnpublish($categoryIds);
     }
 }
