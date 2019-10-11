@@ -23,4 +23,10 @@
         <property name="store" type="string"/>
         <property name="locale" type="string"/>
     </transfer>
+
+    <transfer name="CmsBlockRequest">
+        <property name="category" type="int"/>
+        <property name="position" type="string"/>
+    </transfer>
+
 </transfers>
