@@ -9,17 +9,7 @@ namespace Spryker\Zed\CmsBlockCategoryStorage\Business\Storage;
 
 interface CmsBlockCategoryStorageWriterInterface
 {
-    /**
-     * @param array $categoryIds
-     *
-     * @return void
-     */
     public function publish(array $categoryIds): void;
 
-    /**
-     * @param array $categoryIds
-     *
-     * @return void
-     */
     public function refreshOrUnpublish(array $categoryIds): void;
 }

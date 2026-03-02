@@ -41,10 +41,6 @@ class CmsBlockCategoryStorageReader implements CmsBlockCategoryStorageReaderInte
      */
     protected $synchronizationService;
 
-    /**
-     * @param \Spryker\Client\CmsBlockCategoryStorage\Dependency\Client\CmsBlockCategoryStorageToStorageClientInterface $storageClient
-     * @param \Spryker\Client\CmsBlockCategoryStorage\Dependency\Service\CmsBlockCategoryStorageToSynchronizationServiceInterface $synchronizationService
-     */
     public function __construct(
         CmsBlockCategoryStorageToStorageClientInterface $storageClient,
         CmsBlockCategoryStorageToSynchronizationServiceInterface $synchronizationService
@@ -85,14 +81,6 @@ class CmsBlockCategoryStorageReader implements CmsBlockCategoryStorageReaderInte
         return [];
     }
 
-    /**
-     * @param string $reference
-     * @param string $resourceName
-     * @param string|null $localeName
-     * @param string|null $storeName
-     *
-     * @return string
-     */
     protected function generateKey(
         string $reference,
         string $resourceName,

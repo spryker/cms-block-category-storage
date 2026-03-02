@@ -44,9 +44,6 @@ class CmsBlockCategoryStorageListenerTest extends Unit
      */
     protected const FK_CATEGORY = 5;
 
-    /**
-     * @return void
-     */
     public function testCmsBlockCategoryConnectorPublishStorageListenerStoreData(): void
     {
         SpyCmsBlockCategoryStorageQuery::create()->filterByFkCategory(static::FK_CATEGORY)->delete();
@@ -64,9 +61,6 @@ class CmsBlockCategoryStorageListenerTest extends Unit
         $this->assertCmsBlockCategoryStorage($beforeCount);
     }
 
-    /**
-     * @return void
-     */
     public function testCmsBlockCategoryConnectorStoragePublishListener(): void
     {
         SpyCmsBlockCategoryStorageQuery::create()->filterByFkCategory(static::FK_CATEGORY)->delete();
@@ -85,9 +79,6 @@ class CmsBlockCategoryStorageListenerTest extends Unit
         $this->assertCmsBlockCategoryStorage($beforeCount);
     }
 
-    /**
-     * @return void
-     */
     public function testCmsBlockCategoryConnectorStorageUnpublishListener(): void
     {
         $cmsBlockCategoryConnectorStorageUnpublishListener = new CmsBlockCategoryConnectorStorageUnpublishListener();
@@ -103,9 +94,6 @@ class CmsBlockCategoryStorageListenerTest extends Unit
         $this->assertSame(1, SpyCmsBlockCategoryStorageQuery::create()->filterByFkCategory(static::FK_CATEGORY)->count());
     }
 
-    /**
-     * @return void
-     */
     public function testCmsBlockCategoryConnectorStorageListenerStoreData(): void
     {
         SpyCmsBlockCategoryStorageQuery::create()->filterByFkCategory(static::FK_CATEGORY)->delete();
@@ -125,9 +113,6 @@ class CmsBlockCategoryStorageListenerTest extends Unit
         $this->assertCmsBlockCategoryStorage($beforeCount);
     }
 
-    /**
-     * @return void
-     */
     public function testCmsBlockCategoryConnectorEntityStoragePublishListener(): void
     {
         SpyCmsBlockCategoryStorageQuery::create()->filterByFkCategory(static::FK_CATEGORY)->delete();
@@ -147,9 +132,6 @@ class CmsBlockCategoryStorageListenerTest extends Unit
         $this->assertCmsBlockCategoryStorage($beforeCount);
     }
 
-    /**
-     * @return void
-     */
     public function testCmsBlockCategoryConnectorEntityStorageUnpublishListener(): void
     {
         $cmsBlockCategoryConnectorEntityStorageUnpublishListener = new CmsBlockCategoryConnectorEntityStorageUnpublishListener();
@@ -166,9 +148,6 @@ class CmsBlockCategoryStorageListenerTest extends Unit
         $this->assertSame(1, SpyCmsBlockCategoryStorageQuery::create()->filterByFkCategory(static::FK_CATEGORY)->count());
     }
 
-    /**
-     * @return void
-     */
     public function testCmsBlockCategoryPositionStorageListenerStoreData(): void
     {
         $queryContainer = new CmsBlockCategoryStorageQueryContainer();
@@ -190,9 +169,6 @@ class CmsBlockCategoryStorageListenerTest extends Unit
         $this->assertGreaterThan($beforeCount, $count);
     }
 
-    /**
-     * @return \Spryker\Zed\CmsBlockCategoryStorage\Business\CmsBlockCategoryStorageFacade
-     */
     protected function getCmsBlockCategoryStorageFacade(): CmsBlockCategoryStorageFacade
     {
         $factory = new CmsBlockCategoryStorageBusinessFactory();
@@ -204,11 +180,6 @@ class CmsBlockCategoryStorageListenerTest extends Unit
         return $facade;
     }
 
-    /**
-     * @param int $beforeCount
-     *
-     * @return void
-     */
     protected function assertCmsBlockCategoryStorage(int $beforeCount): void
     {
         $count = SpyCmsBlockCategoryStorageQuery::create()->count();

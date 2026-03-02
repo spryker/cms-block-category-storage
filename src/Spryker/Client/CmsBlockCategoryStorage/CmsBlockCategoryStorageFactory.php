@@ -15,25 +15,16 @@ use Spryker\Client\Kernel\AbstractFactory;
 
 class CmsBlockCategoryStorageFactory extends AbstractFactory
 {
-    /**
-     * @return \Spryker\Client\CmsBlockCategoryStorage\Storage\CmsBlockCategoryStorageReaderInterface
-     */
     public function createCmsBlockCategoryStorageReader(): CmsBlockCategoryStorageReaderInterface
     {
         return new CmsBlockCategoryStorageReader($this->getStorageClient(), $this->getSynchronizationService());
     }
 
-    /**
-     * @return \Spryker\Client\CmsBlockCategoryStorage\Dependency\Client\CmsBlockCategoryStorageToStorageClientInterface
-     */
     public function getStorageClient(): CmsBlockCategoryStorageToStorageClientInterface
     {
         return $this->getProvidedDependency(CmsBlockCategoryStorageDependencyProvider::CLIENT_STORAGE);
     }
 
-    /**
-     * @return \Spryker\Client\CmsBlockCategoryStorage\Dependency\Service\CmsBlockCategoryStorageToSynchronizationServiceInterface
-     */
     public function getSynchronizationService(): CmsBlockCategoryStorageToSynchronizationServiceInterface
     {
         return $this->getProvidedDependency(CmsBlockCategoryStorageDependencyProvider::SERVICE_SYNCHRONIZATION);

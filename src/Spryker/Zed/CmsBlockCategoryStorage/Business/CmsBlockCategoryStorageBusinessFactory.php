@@ -21,9 +21,6 @@ use Spryker\Zed\Kernel\Business\AbstractBusinessFactory;
  */
 class CmsBlockCategoryStorageBusinessFactory extends AbstractBusinessFactory
 {
-    /**
-     * @return \Spryker\Zed\CmsBlockCategoryStorage\Business\Storage\CmsBlockCategoryStorageWriterInterface
-     */
     public function createCmsBlockCategoryStorageWriter(): CmsBlockCategoryStorageWriterInterface
     {
         return new CmsBlockCategoryStorageWriter(
@@ -34,17 +31,11 @@ class CmsBlockCategoryStorageBusinessFactory extends AbstractBusinessFactory
         );
     }
 
-    /**
-     * @return \Spryker\Zed\CmsBlockCategoryStorage\Dependency\Service\CmsBlockCategoryStorageToUtilSanitizeServiceInterface
-     */
     public function getUtilSanitizeService(): CmsBlockCategoryStorageToUtilSanitizeServiceInterface
     {
         return $this->getProvidedDependency(CmsBlockCategoryStorageDependencyProvider::SERVICE_UTIL_SANITIZE);
     }
 
-    /**
-     * @return \Spryker\Zed\CmsBlockCategoryStorage\Business\CmsBlock\CmsBlockFeatureDetectorInterface
-     */
     public function createCmsBlockFeatureDetector(): CmsBlockFeatureDetectorInterface
     {
         return new CmsBlockFeatureDetector();

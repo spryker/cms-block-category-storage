@@ -80,11 +80,6 @@ class CmsBlockCategoryStorageWriter implements CmsBlockCategoryStorageWriterInte
         $this->cmsBlockFeatureDetector = $cmsBlockFeatureDetector;
     }
 
-    /**
-     * @param array $categoryIds
-     *
-     * @return void
-     */
     public function publish(array $categoryIds): void
     {
         $cmsBlockCategoriesTransferCollection = $this->getCmsBlockCategoriesTransferCollection($categoryIds);
@@ -92,11 +87,6 @@ class CmsBlockCategoryStorageWriter implements CmsBlockCategoryStorageWriterInte
         $this->storeData($cmsBlockCategoriesTransferCollection, $spyCmsBlockCategoryStorageEntities);
     }
 
-    /**
-     * @param array $categoryIds
-     *
-     * @return void
-     */
     public function refreshOrUnpublish(array $categoryIds): void
     {
         $cmsBlockCategoriesTransferCollection = $this->getCmsBlockCategoriesTransferCollection($categoryIds);
@@ -132,12 +122,6 @@ class CmsBlockCategoryStorageWriter implements CmsBlockCategoryStorageWriterInte
         }
     }
 
-    /**
-     * @param \Generated\Shared\Transfer\CmsBlockCategoriesTransfer $cmsBlockCategoriesTransfer
-     * @param \Orm\Zed\CmsBlockCategoryStorage\Persistence\SpyCmsBlockCategoryStorage|null $spyCmsBlockCategoryStorage
-     *
-     * @return void
-     */
     protected function storeDataSet(
         CmsBlockCategoriesTransfer $cmsBlockCategoriesTransfer,
         ?SpyCmsBlockCategoryStorage $spyCmsBlockCategoryStorage = null
@@ -153,11 +137,6 @@ class CmsBlockCategoryStorageWriter implements CmsBlockCategoryStorageWriterInte
         $spyCmsBlockCategoryStorage->save();
     }
 
-    /**
-     * @param array $categoryIds
-     *
-     * @return array
-     */
     protected function getCmsBlockCategoriesTransferCollection(array $categoryIds): array
     {
         $cmsBlocksGroupedByCategoryPosition = $this->getCmsBlocksGroupedByCategoryPosition($categoryIds);
@@ -181,11 +160,6 @@ class CmsBlockCategoryStorageWriter implements CmsBlockCategoryStorageWriterInte
         return $cmsBlockCategoriesTransferCollection;
     }
 
-    /**
-     * @param array $categoryIds
-     *
-     * @return array
-     */
     protected function getCmsBlocksGroupedByCategoryPosition(array $categoryIds): array
     {
         $cmsBlockCategoryEntities = $this->queryContainer->queryCmsBlockCategories($categoryIds)->find();
@@ -205,11 +179,6 @@ class CmsBlockCategoryStorageWriter implements CmsBlockCategoryStorageWriterInte
         return $mappedCmsBlockCategories;
     }
 
-    /**
-     * @param array $categoryIds
-     *
-     * @return array
-     */
     protected function findCmsBlockCategoryStorageEntitiesByCategoryIds(array $categoryIds): array
     {
         $cmsBlockCategoryStorageEntities = $this->queryContainer->queryCmsBlockCategoryStorageByIds($categoryIds)->find();

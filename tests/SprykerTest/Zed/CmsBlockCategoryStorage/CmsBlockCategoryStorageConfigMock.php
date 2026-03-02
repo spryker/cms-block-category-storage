@@ -11,9 +11,6 @@ use Spryker\Zed\CmsBlockCategoryStorage\CmsBlockCategoryStorageConfig;
 
 class CmsBlockCategoryStorageConfigMock extends CmsBlockCategoryStorageConfig
 {
-    /**
-     * @return bool
-     */
     public function isSendingToQueue(): bool
     {
         return false;
