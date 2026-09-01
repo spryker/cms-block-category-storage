@@ -10,6 +10,8 @@ namespace SprykerTest\Zed\CmsBlockCategoryStorage\Communication\Plugin\Event\Lis
 use Codeception\Test\Unit;
 use Generated\Shared\Transfer\EventEntityTransfer;
 use Orm\Zed\CmsBlockCategoryConnector\Persistence\Map\SpyCmsBlockCategoryConnectorTableMap;
+use Orm\Zed\CmsBlockCategoryConnector\Persistence\SpyCmsBlockCategoryConnectorQuery;
+use Orm\Zed\CmsBlockCategoryStorage\Persistence\SpyCmsBlockCategoryStorage;
 use Orm\Zed\CmsBlockCategoryStorage\Persistence\SpyCmsBlockCategoryStorageQuery;
 use Spryker\Zed\CmsBlockCategoryConnector\Dependency\CmsBlockCategoryConnectorEvents;
 use Spryker\Zed\CmsBlockCategoryStorage\Business\CmsBlockCategoryStorageBusinessFactory;
@@ -79,19 +81,23 @@ class CmsBlockCategoryStorageListenerTest extends Unit
         $this->assertCmsBlockCategoryStorage($beforeCount);
     }
 
-    public function testCmsBlockCategoryConnectorStorageUnpublishListener(): void
+    public function testCmsBlockCategoryConnectorStorageUnpublishListenerRefreshesStorageEntryOfCategoryWithCmsBlocks(): void
     {
+        // Arrange
+        $idCategory = $this->createEmptyCmsBlockCategoryStorageEntityForCategoryWithCmsBlocks();
+
         $cmsBlockCategoryConnectorStorageUnpublishListener = new CmsBlockCategoryConnectorStorageUnpublishListener();
         $cmsBlockCategoryConnectorStorageUnpublishListener->setFacade($this->getCmsBlockCategoryStorageFacade());
 
         $eventTransfers = [
-            (new EventEntityTransfer())->setId(static::FK_CATEGORY),
+            (new EventEntityTransfer())->setId($idCategory),
         ];
 
+        // Act
         $cmsBlockCategoryConnectorStorageUnpublishListener->handleBulk($eventTransfers, CmsBlockCategoryConnectorEvents::CMS_BLOCK_CATEGORY_CONNECTOR_UNPUBLISH);
 
         // Assert
-        $this->assertSame(1, SpyCmsBlockCategoryStorageQuery::create()->filterByFkCategory(static::FK_CATEGORY)->count());
+        $this->assertCmsBlockCategoryStorageEntryRefreshed($idCategory);
     }
 
     public function testCmsBlockCategoryConnectorStorageListenerStoreData(): void
@@ -132,20 +138,25 @@ class CmsBlockCategoryStorageListenerTest extends Unit
         $this->assertCmsBlockCategoryStorage($beforeCount);
     }
 
-    public function testCmsBlockCategoryConnectorEntityStorageUnpublishListener(): void
+    public function testCmsBlockCategoryConnectorEntityStorageUnpublishListenerRefreshesStorageEntryOfCategoryWithCmsBlocks(): void
     {
+        // Arrange
+        $idCategory = $this->createEmptyCmsBlockCategoryStorageEntityForCategoryWithCmsBlocks();
+
         $cmsBlockCategoryConnectorEntityStorageUnpublishListener = new CmsBlockCategoryConnectorEntityStorageUnpublishListener();
         $cmsBlockCategoryConnectorEntityStorageUnpublishListener->setFacade($this->getCmsBlockCategoryStorageFacade());
 
         $eventTransfers = [
             (new EventEntityTransfer())->setForeignKeys([
-                SpyCmsBlockCategoryConnectorTableMap::COL_FK_CATEGORY => static::FK_CATEGORY,
+                SpyCmsBlockCategoryConnectorTableMap::COL_FK_CATEGORY => $idCategory,
             ]),
         ];
+
+        // Act
         $cmsBlockCategoryConnectorEntityStorageUnpublishListener->handleBulk($eventTransfers, CmsBlockCategoryConnectorEvents::ENTITY_SPY_CMS_BLOCK_CATEGORY_CONNECTOR_DELETE);
 
         // Assert
-        $this->assertSame(1, SpyCmsBlockCategoryStorageQuery::create()->filterByFkCategory(static::FK_CATEGORY)->count());
+        $this->assertCmsBlockCategoryStorageEntryRefreshed($idCategory);
     }
 
     public function testCmsBlockCategoryPositionStorageListenerStoreData(): void
@@ -192,5 +203,56 @@ class CmsBlockCategoryStorageListenerTest extends Unit
 
         $data = $cmsBlockCategoryStorage->getData();
         $this->assertSame(1, count($data['cms_block_categories']));
+    }
+
+    /**
+     * Creates an empty storage entry for a category that still has CMS blocks assigned, so the
+     * unpublish listener has something to refresh and the refresh can be asserted on.
+     */
+    protected function createEmptyCmsBlockCategoryStorageEntityForCategoryWithCmsBlocks(): int
+    {
+        $idCategory = $this->findIdCategoryWithCmsBlocks();
+        $this->assertNotNull($idCategory, 'Expected at least one category with an assigned CMS block to exist.');
+
+        $this->createCmsBlockCategoryStorageEntity($idCategory);
+
+        return $idCategory;
+    }
+
+    protected function createCmsBlockCategoryStorageEntity(int $idCategory): void
+    {
+        SpyCmsBlockCategoryStorageQuery::create()->filterByFkCategory($idCategory)->delete();
+
+        (new SpyCmsBlockCategoryStorage())
+            ->setFkCategory($idCategory)
+            ->setData([])
+            ->setIsSendingToQueue(false)
+            ->save();
+    }
+
+    protected function assertCmsBlockCategoryStorageEntryRefreshed(int $idCategory): void
+    {
+        $cmsBlockCategoryStorageEntity = SpyCmsBlockCategoryStorageQuery::create()->findOneByFkCategory($idCategory);
+        $this->assertNotNull($cmsBlockCategoryStorageEntity);
+        $this->assertNotEmpty($cmsBlockCategoryStorageEntity->getData()['cms_block_categories'] ?? []);
+    }
+
+    protected function findIdCategoryWithCmsBlocks(): ?int
+    {
+        $categoryIds = SpyCmsBlockCategoryConnectorQuery::create()
+            ->select([SpyCmsBlockCategoryConnectorTableMap::COL_FK_CATEGORY])
+            ->distinct()
+            ->find()
+            ->getData();
+
+        if (!$categoryIds) {
+            return null;
+        }
+
+        $cmsBlockCategoryEntity = (new CmsBlockCategoryStorageQueryContainer())
+            ->queryCmsBlockCategories($categoryIds)
+            ->findOne();
+
+        return $cmsBlockCategoryEntity?->getFkCategory();
     }
 }
